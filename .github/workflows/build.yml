@@ -1,0 +1,62 @@
+name: Build APK and Release
+
+on:
+  push:
+    branches: [main, master]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 17
+
+      - uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: 8.9
+
+      # Встроенные шрифты (OFL). Если какой-то не скачался — пропускается.
+      - name: Download fonts
+        run: |
+          mkdir -p app/src/main/assets/fonts
+          cd app/src/main/assets/fonts
+          for f in \
+            pacifico/Pacifico-Regular lobster/Lobster-Regular bebasneue/BebasNeue-Regular \
+            anton/Anton-Regular bangers/Bangers-Regular permanentmarker/PermanentMarker-Regular \
+            righteous/Righteous-Regular satisfy/Satisfy-Regular creepster/Creepster-Regular \
+            pressstart2p/PressStart2P-Regular specialelite/SpecialElite-Regular \
+            abrilfatface/AbrilFatface-Regular monoton/Monoton-Regular marckscript/MarckScript-Regular \
+            ruslandisplay/RuslanDisplay-Regular philosopher/Philosopher-Regular \
+            russoone/RussoOne-Regular amaticsc/AmaticSC-Regular pangolin/Pangolin-Regular \
+            kurale/Kurale-Regular neucha/Neucha-Regular yesevaone/YesevaOne-Regular \
+            badscript/BadScript-Regular; do
+            curl -fsSL -O "https://raw.githubusercontent.com/google/fonts/main/ofl/$f.ttf" || echo "skip $f"
+          done
+          ls -la
+
+      - name: Build debug APK
+        run: gradle assembleDebug --no-daemon --stacktrace
+
+      - name: Rename APK
+        run: cp app/build/outputs/apk/debug/app-debug.apk CutFlow-${{ github.run_number }}.apk
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: CutFlow-apk
+          path: CutFlow-${{ github.run_number }}.apk
+
+      - name: Publish GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: build-${{ github.run_number }}
+          name: CutFlow сборка ${{ github.run_number }}
+          body: Автоматическая сборка. Скачай CutFlow-${{ github.run_number }}.apk и установи на телефон.
+          files: CutFlow-${{ github.run_number }}.apk

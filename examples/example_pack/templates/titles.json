@@ -1,0 +1,9 @@
+{
+  "name": "Титры (пример)",
+  "filter": "cinema",
+  "transition": "fade",
+  "texts": [
+    { "text": "НАЗВАНИЕ", "font": "serif", "size": 0.1, "color": "#FFFFFF", "startMs": 0, "durMs": 3000, "x": 0.5, "y": 0.5, "anim": "pop" }
+  ],
+  "sfx": [ { "id": "whoosh", "atMs": 0 } ]
+}
