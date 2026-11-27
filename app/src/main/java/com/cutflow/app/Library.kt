@@ -22,9 +22,9 @@ data class TemplateDef(val id: String, val name: String, val json: String, val p
  * Формат zip-пака (все папки необязательны):
  *   pack.json                 {"name": "Мой пак", "author": "..."}
  *   transitions/<id>.glsl     GLSL в формате gl-transitions (+ необязательно <id>.json {"name": "..."})
- *   fonts/*.ttf | *.otf
- *   sounds/*.mp3 | *.wav | *.ogg | *.m4a | *.aac | *.flac
- *   templates/*.json          см. README
+ *   fonts/                    файлы .ttf и .otf
+ *   sounds/                   файлы mp3, wav, ogg, m4a, aac, flac
+ *   templates/                файлы .json, см. README
  */
 object Library {
     var version by mutableIntStateOf(0)
